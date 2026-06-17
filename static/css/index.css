@@ -1,0 +1,591 @@
+body {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+/* ======= VIDEO COMPARISON SECTION ======= */
+.video-compare-container {
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  display: block;
+  line-height: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .video-compare-container {
+    width: calc(100% - 1.5rem);
+  }
+}
+
+.video-compare-container canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.videoMerge {
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  display: block;
+  margin: 0 auto;
+  background-size: cover;
+}
+
+/* ======= GENERAL STYLING ======= */
+.footer .icon-link {
+  font-size: 25px;
+  color: #000;
+}
+
+.link-block a {
+  margin: 5px 0;
+}
+
+.dnerf {
+  font-variant: small-caps;
+}
+
+.teaser {
+  font-family: 'Google Sans', sans-serif;
+}
+
+.teaser .hero-body {
+  padding-top: 0;
+  padding-bottom: 3rem;
+}
+
+.publication-title {
+  font-family: 'Google Sans', sans-serif;
+  margin-top: -20px;
+}
+
+.publication-authors {
+  color: #000;
+  font-family: 'Google Sans', sans-serif;
+}
+
+.publication-authors a {
+  color: hsl(204, 60%, 30%) !important;
+}
+
+.publication-authors a:hover {
+  text-decoration: underline;
+}
+
+.publication-venue {
+  color: #000;
+  font-weight: bold;
+}
+
+.publication-awards {
+  color: #ff3860;
+  width: fit-content;
+  font-weight: bolder;
+}
+
+.author-block {
+  display: inline-block;
+}
+
+/* ======= PUBLICATION VIDEOS / IMAGES ======= */
+.publication-video {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+  overflow: hidden;
+  border-radius: 10px !important;
+}
+
+.publication-video iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ======= RESULTS CAROUSEL ======= */
+.results-carousel {
+  overflow: hidden;
+}
+
+.results-carousel .item {
+  margin: 5px;
+  border: 1px solid #bbb;
+  border-radius: 10px;
+  padding: 0;
+  font-size: 0.9em;
+}
+
+.results-carousel video {
+  margin: 0;
+  width: 100%;
+}
+
+/* ======= INTERPOLATION PANELS ======= */
+.interpolation-panel {
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.interpolation-panel .interpolation-image {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.interpolation-panel .slider {
+  margin: 0 !important;
+}
+
+#interpolation-image-wrapper {
+  width: 100%;
+}
+
+#interpolation-image-wrapper img {
+  border-radius: 5px;
+}
+
+/* ======= BEFORE / AFTER SLIDERS ======= */
+.bal-container-small {
+  position: relative;
+  width: 100%;
+  /* Removed fixed height: 330px */
+  cursor: grab;
+  overflow: hidden;
+  border-radius: 10px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  line-height: 0;
+  /* Prevents small vertical gaps */
+}
+
+.bal-container-big {
+  position: relative;
+  width: 100%;
+  cursor: grab;
+  overflow: hidden;
+}
+
+.bal-after {
+  position: relative;
+  width: 100%;
+  display: block;
+}
+
+.bal-after img {
+  width: 100%;
+  height: auto;
+  display: block;
+  /* object-fit: contain; */
+  /* Not needed if width 100% height auto */
+}
+
+.bal-before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 15;
+  /* Removed border-right to fix the "weird line" issue */
+}
+
+.bal-before-inset {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+}
+
+.bal-before-inset img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* labels */
+.bal-beforePosition,
+.bal-afterPosition {
+  background: #121212;
+  /* Start with solid black as requested */
+  color: #fff;
+  pointer-events: none;
+  border-radius: 0.2rem;
+  padding: 0.6rem 0.75em;
+  /* Increased padding */
+  font-size: 1.1em;
+  font-weight: normal;
+  user-select: none;
+  z-index: 20;
+}
+
+/* Positioning labels at the bottom, matching original styling */
+.bal-beforePosition {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  /* Reset top/right from previous edits */
+  top: auto;
+  right: auto;
+}
+
+.bal-afterPosition {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  /* Reset top/left from previous edits */
+  top: auto;
+  left: auto;
+}
+
+/* Handle + arrows */
+.bal-handle {
+  height: 40px;
+  width: 40px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -20px;
+  margin-top: -20px;
+  border: 2px solid #fff;
+  background: transparent;
+  /* No background to match video handle style */
+  border-radius: 50%;
+  z-index: 20;
+  pointer-events: none;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  transform: translateX(-50%);
+  margin-left: 0;
+}
+
+/* Re-implement the vertical line using pseudo-elements on the handle */
+.bal-handle::before,
+.bal-handle::after {
+  content: " ";
+  display: block;
+  width: 2px;
+  background: #fff;
+  height: 9999px;
+  /* Large height effectively covers the container */
+  position: absolute;
+  left: 50%;
+  margin-left: -1px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Line going UP from the handle */
+.bal-handle::before {
+  bottom: 50%;
+  margin-bottom: 20px;
+  /* Offset by radius to not cross the circle */
+}
+
+/* Line going DOWN from the handle */
+.bal-handle::after {
+  top: 50%;
+  margin-top: 20px;
+  /* Offset by radius to not cross the circle */
+}
+
+/* Arrow styling */
+.handle-left-arrow,
+.handle-right-arrow {
+  width: 0;
+  height: 0;
+  border: 6px inset transparent;
+  position: absolute;
+  top: 50%;
+  margin-top: -6px;
+}
+
+.handle-left-arrow {
+  border-right: 6px solid #fff;
+  left: 50%;
+  margin-left: -14px;
+}
+
+.handle-right-arrow {
+  border-left: 6px solid #fff;
+  right: 50%;
+  margin-right: -14px;
+}
+
+/* ======= CAROUSEL CONTROLS ======= */
+#comparison-carousel,
+#comparison-carousel .carousel,
+#comparison-carousel .slider,
+#comparison-carousel .slider-container,
+#comparison-carousel .item {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+#comparison-carousel .slider-navigation-next,
+#comparison-carousel .slider-navigation-previous {
+  border: 2px solid #555 !important;
+  box-shadow: none !important;
+  background: #fff !important;
+  border-radius: 50% !important;
+  transition: all 0.2s ease;
+}
+
+#comparison-carousel .slider-navigation-next:hover,
+#comparison-carousel .slider-navigation-previous:hover {
+  border-color: #000 !important;
+  background: #f5f5f5 !important;
+}
+
+#comparison-carousel .slider-navigation-previous {
+  left: 6px !important;
+}
+
+#comparison-carousel .slider-navigation-next {
+  right: 6px !important;
+}
+
+/* Hide navigation arrows on mobile */
+@media screen and (max-width: 768px) {
+
+  #comparison-carousel .slider-navigation-previous,
+  #comparison-carousel .slider-navigation-next {
+    display: none !important;
+  }
+}
+
+#comparison-carousel .item {
+  margin: 0 auto !important;
+  max-width: 94%;
+  padding: 1rem 0;
+}
+
+/* pagination dots + spacing */
+#comparison-carousel .slider-pagination {
+  transform: translateY(10px);
+}
+
+#comparison-carousel {
+  padding-bottom: 2.5rem;
+  /* ensures dots aren't clipped */
+}
+
+#comparison-carousel .slider-pagination .slider-page {
+  box-shadow: none !important;
+  border: 1px solid #555 !important;
+}
+
+#comparison-carousel .slider-pagination .slider-page.is-active {
+  background: #555 !important;
+}
+
+/* Ensure pagination dots are visible on mobile */
+/* Ensure pagination dots are visible on mobile */
+@media screen and (max-width: 768px) {
+  #comparison-carousel .slider-pagination {
+    display: block !important;
+    /* Bulma carousel sometimes hides these by default on mobile */
+    opacity: 1 !important;
+    transform: translateY(-25px) !important;
+    /* Move dots closer to image */
+  }
+
+  #comparison-carousel .item {
+    padding-bottom: 0.25rem !important;
+    /* Reduce padding between image and dots */
+  }
+
+  #comparison-carousel {
+    padding-bottom: 1.5rem;
+    /* Reduce container padding */
+  }
+}
+
+/* Math display toggling */
+.math-mobile {
+  display: none;
+}
+
+.math-desktop {
+  display: block;
+}
+
+@media screen and (max-width: 768px) {
+  .math-mobile {
+    display: block;
+  }
+
+  .math-desktop {
+    display: none;
+  }
+}
+
+/* ════════════════════════════════════════
+   PDF VIEWER MODAL
+   ════════════════════════════════════════ */
+.pdf-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.pdf-overlay.active {
+  display: flex;
+  flex-direction: column;
+}
+
+.pdf-overlay.show {
+  opacity: 1;
+}
+
+.pdf-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+  color: #222222;
+  flex-shrink: 0;
+  position: relative;
+  font-family: 'Google Sans', 'Noto Sans', sans-serif;
+}
+
+.pdf-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 1;
+  min-width: 0;
+  z-index: 1;
+}
+
+.pdf-logo-close {
+  color: #363636;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.pdf-logo-close:hover {
+  opacity: 0.7;
+}
+
+.pdf-logo-close .logo-desktop {
+  display: inline-flex;
+}
+
+.pdf-logo-close .logo-mobile {
+  display: none;
+}
+
+.pdf-title {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #222222;
+}
+
+.pdf-toolbar-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pdf-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: 1px solid #dbdbdb;
+  background: #f5f5f5;
+  color: #595959;
+  font-family: 'Google Sans', 'Noto Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+
+.pdf-toolbar-btn:hover {
+  background: #ffffff;
+  border-color: #363636;
+  color: #363636;
+}
+
+.pdf-toolbar-btn.close-btn {
+  border: none;
+  background: none;
+  font-size: 22px;
+  padding: 4px 8px;
+  line-height: 1;
+  color: #595959;
+}
+
+.pdf-toolbar-btn.close-btn:hover {
+  background: none;
+  border-color: transparent;
+  color: #363636;
+}
+
+.pdf-viewer-container {
+  flex: 1;
+  width: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #f5f5f5;
+}
+
+.pdf-viewer-frame {
+  display: block;
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 640px) {
+  .pdf-toolbar {
+    padding: 10px 14px;
+  }
+
+  .pdf-title {
+    font-size: 13px;
+    flex-grow: 1;
+  }
+
+  .pdf-toolbar-btn span.btn-label {
+    display: none;
+  }
+
+  .pdf-toolbar-btn {
+    padding: 7px 10px;
+  }
+
+  .pdf-logo-close .logo-desktop {
+    display: none;
+  }
+
+  .pdf-logo-close .logo-mobile {
+    display: inline-flex;
+  }
+}

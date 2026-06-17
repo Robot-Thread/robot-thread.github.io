@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description"
+        content="THREAD presents the first diffusion-based trajectory planner for hybrid rigid-soft manipulators, learning a generative prior over physically realizable backbone trajectories conditioned on local environment geometry, enabling sample-efficient cross-embodiment real-world transfer.">
+    <meta name="keywords"
+        content="hybrid manipulator, soft continuum arm, diffusion model, trajectory planning, backbone shape, collision avoidance, reinforcement learning, cross-embodiment transfer, threading, aperture, robot learning">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>THREAD: Trajectory Planning for Hybrid Rigid-Soft Manipulators with Environment-Aware Diffusion</title>
+
+    <!-- Canonical Link -->
+    <link rel="canonical" href="https://thread-robot.github.io/">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title"
+        content="THREAD: Trajectory Planning for Hybrid Rigid-Soft Manipulators with Environment-Aware Diffusion">
+    <meta property="og:description"
+        content="THREAD presents the first diffusion-based trajectory planner for hybrid manipulation, learning a generative prior over backbone trajectories conditioned on environment geometry.">
+    <meta property="og:url" content="https://thread-robot.github.io/">
+    <meta property="og:image" content="https://thread-robot.github.io/static/images/teaser.png">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="THREAD">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title"
+        content="THREAD: Trajectory Planning for Hybrid Rigid-Soft Manipulators with Environment-Aware Diffusion">
+    <meta name="twitter:description"
+        content="THREAD presents the first diffusion-based trajectory planner for hybrid manipulation, learning a generative prior over backbone trajectories conditioned on environment geometry.">
+    <meta name="twitter:image" content="https://thread-robot.github.io/static/images/teaser.png">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ScholarlyArticle",
+      "headline": "THREAD: Trajectory Planning for Hybrid Rigid-Soft Manipulators with Environment-Aware Diffusion",
+      "author": [
+        {"@type": "Person", "name": "Shivani Kamtikar", "url": "https://shivanikamtikar.github.io/"},
+        {"@type": "Person", "name": "Pranav Asthana"},
+        {"@type": "Person", "name": "Naveen Kumar Uppalapati"},
+        {"@type": "Person", "name": "Girish Krishnan"},
+        {"@type": "Person", "name": "Girish Chowdhary"}
+      ],
+      "description": "THREAD presents the first diffusion-based trajectory planner for hybrid rigid-soft manipulators, learning a generative prior over physically realizable backbone trajectories conditioned on local environment geometry.",
+      "datePublished": "2026",
+      "url": "https://thread-robot.github.io/"
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com/css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://ajax.googleapis.com">
+
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script defer src="./static/js/index.js"></script>
+
+    <style>
+        /* ======= THREAD-SPECIFIC STYLES ======= */
+        .stage-card {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: 100%;
+            border: 1px solid #e8e8e8;
+        }
+
+        .stage-card .stage-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stage-card h4 {
+            font-family: 'Google Sans', sans-serif;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .result-highlight {
+            display: inline-block;
+            background: #23d160;
+            color: #fff;
+            border-radius: 20px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0.2rem 0.15rem;
+        }
+
+        .result-highlight.secondary {
+            background: #3273dc;
+        }
+
+        .placeholder-fig {
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #999;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 2rem;
+            min-height: 260px;
+        }
+
+        .placeholder-fig i {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .placeholder-video {
+            background: #1a1a1a;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #888;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 3rem 2rem;
+            min-height: 280px;
+        }
+
+        .placeholder-video i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .contribution-tag {
+            display: inline-block;
+            background: #3273dc;
+            color: #fff;
+            border-radius: 4px;
+            padding: 0.15rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+        .affil-note {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .stat-box {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 1.25rem 1rem;
+            text-align: center;
+            border: 1px solid #e8e8e8;
+        }
+
+        .stat-box .stat-number {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3273dc;
+            line-height: 1;
+        }
+
+        .stat-box .stat-label {
+            font-size: 0.82rem;
+            color: #555;
+            margin-top: 0.3rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ===== HERO: TITLE + AUTHORS ===== -->
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container is-max-desktop">
+                <div class="columns is-centered">
+                    <div class="column has-text-centered">
+                        <h1 class="title is-1 publication-title">THREAD: Trajectory Planning for Hybrid<br>Rigid-Soft Manipulators with Environment-Aware Diffusion</h1>
+
+                        <div class="is-size-4 publication-venue" style="margin-bottom: 0.5rem;">
+                            IROS 2026
+                        </div>
+
+                        <div class="is-size-5 publication-authors" style="margin-top: 0.75rem;">
+                            <span class="author-block">
+                                <a href="https://shivanikamtikar.github.io/" target="_blank" rel="noopener noreferrer">Shivani Kamtikar</a><sup>1</sup>,
+                            </span>
+                            <span class="author-block">
+                                Pranav Asthana<sup>2</sup>,
+                            </span>
+                            <span class="author-block">
+                                Naveen Kumar Uppalapati<sup>4</sup>,
+                            </span>
+                            <span class="author-block">
+                                Girish Krishnan<sup>3</sup>,
+                            </span>
+                            <span class="author-block">
+                                Girish Chowdhary<sup>1</sup>
+                            </span>
+                        </div>
+
+                        <div class="is-size-6 publication-authors" style="margin-top: 0.4rem;">
+                            <span class="affil-note">
+                                <sup>1</sup>Computer Science, University of Illinois Urbana-Champaign &nbsp;
+                                <sup>2</sup>Computer Science, University of Maryland College Park &nbsp;
+                                <sup>3</sup>Mechanical Science and Engineering, UIUC &nbsp;
+                                <sup>4</sup>NCSA, University of Illinois Urbana-Champaign
+                            </span>
+                        </div>
+
+                        <div class="column has-text-centered">
+                            <div class="publication-links">
+                                <!-- Paper PDF — coming soon -->
+                                <span class="link-block">
+                                    <a href="#"
+                                        title="Coming Soon"
+                                        class="external-link button is-normal is-rounded is-dark"
+                                        style="cursor: default; opacity: 0.7;"
+                                        onclick="return false;">
+                                        <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                                        <span>Paper (Coming Soon)</span>
+                                    </a>
+                                </span>
+                                <!-- arXiv — coming soon -->
+                                <span class="link-block">
+                                    <a href="#"
+                                        title="Coming Soon"
+                                        class="external-link button is-normal is-rounded is-dark"
+                                        style="cursor: default; opacity: 0.7;"
+                                        onclick="return false;">
+                                        <span class="icon"><i class="ai ai-arxiv"></i></span>
+                                        <span>arXiv (Coming Soon)</span>
+                                    </a>
+                                </span>
+                                <!-- Code — coming soon -->
+                                <span class="link-block">
+                                    <a href="#"
+                                        title="Coming Soon"
+                                        class="external-link button is-normal is-rounded is-dark"
+                                        style="cursor: default; opacity: 0.7;"
+                                        onclick="return false;">
+                                        <span class="icon"><i class="fab fa-github"></i></span>
+                                        <span>Code (Coming Soon)</span>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TEASER ===== -->
+    <section class="hero teaser">
+        <div class="hero-body" style="padding-top: 0; padding-bottom: 2rem;">
+            <div class="container is-max-desktop">
+                <!-- Replace placeholder-video divs below with <video> tags once footage is ready -->
+                <div class="columns is-multiline is-centered" style="gap: 0.5rem 0;">
+                    <div class="column is-half" style="padding: 0.4rem;">
+                        <p class="has-text-centered" style="font-weight: 600; margin-bottom: 0.35rem;">Simulation</p>
+                        <div class="placeholder-video">
+                            <i class="fas fa-film"></i>
+                            <span>Video coming soon</span>
+                        </div>
+                    </div>
+                    <div class="column is-half" style="padding: 0.4rem;">
+                        <p class="has-text-centered" style="font-weight: 600; margin-bottom: 0.35rem;">Real-World Transfer</p>
+                        <div class="placeholder-video">
+                            <i class="fas fa-film"></i>
+                            <span>Video coming soon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ABSTRACT ===== -->
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Abstract</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            Manipulation through confined environments, such as threading a manipulator through
+                            narrow apertures, remains a fundamental challenge, especially for conventional rigid
+                            manipulators. Hybrid rigid-soft manipulators offer promise but face two compounding
+                            planning challenges: backbone shapes feasible in free space become infeasible under
+                            environmental contact, and planning rigid and soft segments independently ignores
+                            their kinematic coupling.
+                        </p>
+                        <p>
+                            We present <strong>THREAD</strong>, the first diffusion-based trajectory planner for
+                            hybrid manipulation, learning a generative prior over physically realizable backbone
+                            trajectories conditioned on local environment geometry, with physics-inspired losses
+                            encoding curvature, smoothness, and collision constraints jointly across both segments.
+                        </p>
+                        <p>
+                            Trained in simulation, THREAD achieves <strong>92.4% task success</strong> with
+                            <strong>5&times; fewer collisions</strong> than the strongest baseline. We show
+                            cross-embodiment real-world transfer with minimal online updates, successfully threading
+                            through apertures as small as <strong>1.3&times; the soft segment diameter</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== KEY STATS ===== -->
+    <section class="section" style="padding-top: 0; padding-bottom: 2.5rem;">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered">
+                <div class="column is-four-fifths">
+                    <div class="columns is-mobile is-multiline is-centered">
+                        <div class="column is-one-third-tablet is-half-mobile">
+                            <div class="stat-box">
+                                <div class="stat-number">92.4%</div>
+                                <div class="stat-label">Task success rate in simulation</div>
+                            </div>
+                        </div>
+                        <div class="column is-one-third-tablet is-half-mobile">
+                            <div class="stat-box">
+                                <div class="stat-number">5&times;</div>
+                                <div class="stat-label">Fewer collisions vs. strongest baseline</div>
+                            </div>
+                        </div>
+                        <div class="column is-one-third-tablet is-half-mobile">
+                            <div class="stat-box">
+                                <div class="stat-number">1.3&times;</div>
+                                <div class="stat-label">Minimum aperture-to-segment diameter ratio</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== KEY CONTRIBUTIONS ===== -->
+    <section class="section" style="padding-top: 0;">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Contributions</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            <span class="contribution-tag">1</span>
+                            <strong>Unified rigid-soft backbone representation.</strong> We encode the full kinematic
+                            chain as a backbone shape, enabling joint trajectory optimization over both rigid and
+                            soft subsystems without planning each segment independently.
+                        </p>
+                        <p>
+                            <span class="contribution-tag">2</span>
+                            <strong>Diffusion planner in backbone shape space.</strong> We introduce the first
+                            diffusion planner for hybrid manipulators, extending diffusion trajectory planning from
+                            rigid joint spaces to the continuous backbone shape domain and learning a generative
+                            prior over physically realizable trajectories.
+                        </p>
+                        <p>
+                            <span class="contribution-tag">3</span>
+                            <strong>Inference-time collision avoidance with online RL refinement.</strong> We
+                            incorporate inference-time gradient-based geometric guidance into the diffusion sampling
+                            process to enforce collision-free trajectories, complemented by a residual RL policy
+                            that issues fine corrective updates during execution.
+                        </p>
+                        <p>
+                            <span class="contribution-tag">4</span>
+                            <strong>Sample-efficient cross-embodied real-world transfer.</strong> We demonstrate that
+                            planning over backbone shapes enables direct transfer to a different rigid-soft
+                            embodiment in the real world, requiring only minimal online RL adaptation without
+                            retraining the diffusion planner.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== METHOD ===== -->
+    <section class="section" style="background: #fafafa; padding-top: 3rem; padding-bottom: 3rem;">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column">
+                    <h2 class="title is-3">Method</h2>
+                    <div class="content has-text-justified" style="max-width: 720px; margin: 0 auto 2rem;">
+                        <p>
+                            THREAD encodes the full hybrid arm as a <em>backbone shape</em> — a unified
+                            representation spanning both the rigid and soft segments. A diffusion model learns
+                            a prior over collision-free backbone trajectories conditioned on local voxelized
+                            environment geometry. At inference time, gradient guidance from a collision cost
+                            steers denoising toward safe paths. A lightweight residual RL policy then issues
+                            fine-grained corrective commands during real execution, enabling cross-embodiment
+                            transfer with minimal online adaptation.
+                        </p>
+                    </div>
+
+                    <!-- Pipeline figure placeholder — replace with: <img src="static/images/pipeline.png" ...> -->
+                    <div style="margin: 0 auto 2.5rem; max-width: 800px;">
+                        <div class="placeholder-fig">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>Pipeline figure coming soon</span>
+                        </div>
+                    </div>
+
+                    <!-- Three components -->
+                    <div class="columns is-centered" style="margin-top: 1.5rem;">
+                        <div class="column is-one-third">
+                            <div class="stage-card">
+                                <div class="stage-icon">&#128279;</div>
+                                <h4>Backbone Representation</h4>
+                                <p class="has-text-justified" style="font-size: 0.9rem;">
+                                    The full kinematic chain — rigid arm joints and the soft segment's
+                                    continuous curvature — is expressed as a single backbone shape. This
+                                    shared representation couples both subsystems and enables joint
+                                    trajectory optimization without segment-wise decomposition.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-one-third">
+                            <div class="stage-card">
+                                <div class="stage-icon">&#127774;</div>
+                                <h4>Diffusion Trajectory Planner</h4>
+                                <p class="has-text-justified" style="font-size: 0.9rem;">
+                                    A denoising diffusion model is trained on simulation rollouts to learn
+                                    a prior over physically realizable backbone trajectories conditioned on
+                                    voxelized local geometry. Physics-inspired losses enforce curvature,
+                                    smoothness, and collision constraints jointly. At inference time,
+                                    gradient-based geometric guidance steers sampling toward collision-free paths.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-one-third">
+                            <div class="stage-card">
+                                <div class="stage-icon">&#129504;</div>
+                                <h4>Residual RL for Real-World Transfer</h4>
+                                <p class="has-text-justified" style="font-size: 0.9rem;">
+                                    A residual RL policy issues fine corrective commands during execution on
+                                    the physical robot. Planning in backbone shape space allows the diffusion
+                                    planner to transfer directly across embodiments; only the lightweight
+                                    residual policy requires minimal online updates on the target hardware.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== EXPERIMENTS ===== -->
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Experiments</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            We evaluate THREAD in simulation across challenging confined-environment scenarios —
+                            including narrow aperture threading and cluttered passages — and validate real-world
+                            transfer on a physical hybrid rigid-soft manipulator. All baselines are trained under
+                            identical conditions; THREAD is trained once in simulation and transferred with minimal
+                            online RL adaptation.
+                        </p>
+                    </div>
+
+                    <!-- Results figure placeholder — replace with: <img src="static/images/results.png" ...> -->
+                    <div style="margin: 0 auto 2rem; max-width: 800px;">
+                        <div class="placeholder-fig">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Results figure coming soon</span>
+                        </div>
+                    </div>
+
+                    <div class="content has-text-justified">
+                        <p>
+                            THREAD achieves <strong>92.4% task success</strong> in simulation while incurring
+                            <strong>5&times; fewer collisions</strong> than the strongest baseline. In real-world
+                            experiments, the system successfully threads through apertures as small as
+                            <strong>1.3&times; the soft segment diameter</strong>, demonstrating robust
+                            cross-embodiment transfer enabled by the shared backbone shape representation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== BIBTEX ===== -->
+    <section class="section" id="BibTeX">
+        <div class="container is-max-desktop content">
+            <h2 class="title">BibTeX</h2>
+            <div class="bibtex-container"
+                style="position: relative; background: #f5f5f5; border-radius: 8px; padding: 0.5rem;">
+                <button class="copy-code-btn" id="copy-btn"
+                    onclick="navigator.clipboard.writeText(document.getElementById('bibtex-content').innerText).then(()=>{this.innerHTML='<i class=\'fa fa-check\'></i>';setTimeout(()=>{this.innerHTML='<i class=\'fa fa-copy\'></i>';},1500)})"
+                    style="position: absolute; top: 0.5rem; right: 0.5rem; padding: 0.5rem; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 4px; color: #595959; font-size: 1rem; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; z-index: 10; line-height: 1;">
+                    <i class="fa fa-copy"></i>
+                </button>
+                <pre><code id="bibtex-content">@inproceedings{kamtikar2026thread,
+  title={THREAD: Trajectory Planning for Hybrid Rigid-Soft Manipulators with Environment-Aware Diffusion},
+  author={Kamtikar, Shivani and Asthana, Pranav and Uppalapati, Naveen Kumar and Krishnan, Girish and Chowdhary, Girish},
+  booktitle={IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  year={2026}
+}</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="content has-text-centered">
+                <a class="icon-link" href="#" title="THREAD paper PDF" style="pointer-events: none; opacity: 0.5;">
+                    <i class="fas fa-file-pdf"></i>
+                </a>
+                <a class="icon-link" href="#" title="arXiv" style="pointer-events: none; opacity: 0.5;">
+                    <i class="ai ai-arxiv"></i>
+                </a>
+                <a class="icon-link" href="#" title="GitHub" style="pointer-events: none; opacity: 0.5;">
+                    <i class="fab fa-github"></i>
+                </a>
+            </div>
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <div class="content has-text-centered">
+                        <p>
+                            We thank the authors of <a href="https://github.com/nerfies/nerfies.github.io/tree/main"
+                                target="_blank" rel="noopener noreferrer">Nerfies</a>
+                            for open-sourcing the website template.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
