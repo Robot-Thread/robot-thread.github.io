@@ -213,10 +213,10 @@
                                 Pranav Asthana<sup>2</sup>,
                             </span>
                             <span class="author-block">
-                                Naveen Kumar Uppalapati<sup>4</sup>,
+                                Naveen Kumar Uppalapati<sup>1</sup>,
                             </span>
                             <span class="author-block">
-                                Girish Krishnan<sup>3</sup>,
+                                Girish Krishnan<sup>1</sup>,
                             </span>
                             <span class="author-block">
                                 Girish Chowdhary<sup>1</sup>
@@ -227,10 +227,14 @@
                             <span class="affil-note">
                                 <sup>1</sup>Computer Science, University of Illinois Urbana-Champaign &nbsp;
                                 <sup>2</sup>Computer Science, University of Maryland College Park &nbsp;
-                                <sup>3</sup>Mechanical Science and Engineering, UIUC &nbsp;
-                                <sup>4</sup>NCSA, University of Illinois Urbana-Champaign
+
                             </span>
                         </div>
+
+                        <div class="is-size-6" style="margin-top: 0.4rem; color: #555;">
+                            Contact: <a href="mailto:skk7@illinois.edu">skk7@illinois.edu</a>
+                        </div>
+
 
                         <div class="column has-text-centered">
                             <div class="publication-links">
@@ -283,17 +287,17 @@
                 <div class="columns is-multiline is-centered" style="gap: 0.5rem 0;">
                     <div class="column is-half" style="padding: 0.4rem;">
                         <p class="has-text-centered" style="font-weight: 600; margin-bottom: 0.35rem;">Simulation</p>
-                        <div class="placeholder-video">
-                            <i class="fas fa-film"></i>
-                            <span>Video coming soon</span>
-                        </div>
+                        <video controls autoplay muted loop playsinline style="width: 100%; border-radius: 10px;">
+                            <source src="images/sim_vids.mov" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
                     </div>
                     <div class="column is-half" style="padding: 0.4rem;">
                         <p class="has-text-centered" style="font-weight: 600; margin-bottom: 0.35rem;">Real-World Transfer</p>
-                        <div class="placeholder-video">
-                            <i class="fas fa-film"></i>
-                            <span>Video coming soon</span>
-                        </div>
+                        <video controls autoplay muted loop playsinline style="width: 100%; border-radius: 10px;">
+                            <source src="images/real-world_vid.mov" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
                     </div>
                 </div>
             </div>
@@ -321,12 +325,7 @@
                             trajectories conditioned on local environment geometry, with physics-inspired losses
                             encoding curvature, smoothness, and collision constraints jointly across both segments.
                         </p>
-                        <p>
-                            Trained in simulation, THREAD achieves <strong>92.4% task success</strong> with
-                            <strong>5&times; fewer collisions</strong> than the strongest baseline. We show
-                            cross-embodiment real-world transfer with minimal online updates, successfully threading
-                            through apertures as small as <strong>1.3&times; the soft segment diameter</strong>.
-                        </p>
+                        
                     </div>
                 </div>
             </div>
@@ -355,6 +354,12 @@
                             <div class="stat-box">
                                 <div class="stat-number">1.3&times;</div>
                                 <div class="stat-label">Minimum aperture-to-segment diameter ratio</div>
+                            </div>
+                        </div>
+                        <div class="column is-one-third-tablet is-half-mobile">
+                            <div class="stat-box">
+                                <div class="stat-number">&#10003;</div>
+                                <div class="stat-label">Cross-Embodied Transfer to real hardware</div>
                             </div>
                         </div>
                     </div>
@@ -411,22 +416,17 @@
                     <h2 class="title is-3">Method</h2>
                     <div class="content has-text-justified" style="max-width: 720px; margin: 0 auto 2rem;">
                         <p>
-                            THREAD encodes the full hybrid arm as a <em>backbone shape</em> — a unified
-                            representation spanning both the rigid and soft segments. A diffusion model learns
-                            a prior over collision-free backbone trajectories conditioned on local voxelized
-                            environment geometry. At inference time, gradient guidance from a collision cost
-                            steers denoising toward safe paths. A lightweight residual RL policy then issues
-                            fine-grained corrective commands during real execution, enabling cross-embodiment
-                            transfer with minimal online adaptation.
+                            We address the problem of threading a hybrid soft-rigid manipulator through a narrow hole in a wall, requiring perception, motion planning, 
+                            actuation, and online error correction. Our system, illustrated below, 
+                            comprises of an initial 3D reconstruction and goal detection phase followed by three components operating in a closed loop: 
+                            (1) a diffusion trajectory planner that generates a backbone shape trajectory conditioned on the arm state, scene geometry and goal pose; 
+                            (2) an inverse kinematics (IK) model that translates each planned shape into hybrid actuation commands; and (3) a residual RL policy that issues small corrective actions to close the gap 
+                            between planned and executed trajectories. The planner is re-invoked in a receding-horizon replanning loop every 32 steps to re-anchor the plan to the current robot state.
                         </p>
                     </div>
 
-                    <!-- Pipeline figure placeholder — replace with: <img src="static/images/pipeline.png" ...> -->
                     <div style="margin: 0 auto 2.5rem; max-width: 800px;">
-                        <div class="placeholder-fig">
-                            <i class="fas fa-project-diagram"></i>
-                            <span>Pipeline figure coming soon</span>
-                        </div>
+                        <embed src="images/thread_pipeline.pdf" type="application/pdf" width="100%" height="520px" style="border-radius: 10px; border: 1px solid #e8e8e8;">
                     </div>
 
                     <!-- Three components -->
