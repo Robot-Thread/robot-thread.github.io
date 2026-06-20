@@ -398,17 +398,7 @@
             <div class="columns is-centered has-text-centered">
                 <div class="column">
                     <h2 class="title is-3">Method</h2>
-                    <div class="content has-text-justified" style="max-width: 720px; margin: 0 auto 2rem;">
-                        <p>
-                            We address the problem of threading a hybrid soft-rigid manipulator through a narrow hole in a wall, requiring perception, motion planning, 
-                            actuation, and online error correction. Our system, illustrated below, 
-                            comprises of an initial 3D reconstruction and goal detection phase followed by three components operating in a closed loop: 
-                            (1) a diffusion trajectory planner that generates a backbone shape trajectory conditioned on the arm state, scene geometry and goal pose; 
-                            (2) an inverse kinematics (IK) model that translates each planned shape into hybrid actuation commands; and (3) a residual RL policy that issues small corrective actions to close the gap 
-                            between planned and executed trajectories. The planner is re-invoked in a receding-horizon replanning loop every 32 steps to re-anchor the plan to the current robot state.
-                        </p>
-                    </div>
-
+                    
                     <div style="margin: 0 auto 2.5rem; max-width: 800px;">
                         <img src="images/pipeline.png" alt="THREAD pipeline" style="width: 100%; border-radius: 10px; border: 1px solid #e8e8e8; display: block;">
                     </div>
